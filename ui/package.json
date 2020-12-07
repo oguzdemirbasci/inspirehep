@@ -16,11 +16,11 @@
     "test": "yarn lint && yarn test:unit --no-watch && yarn test:size",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "eject": "react-scripts eject",
-    "lint":
-      "./node_modules/eslint/bin/eslint.js ./src --ext .js,.jsx --config .eslintrc"
+    "lint": "./node_modules/eslint/bin/eslint.js ./src --ext .js,.jsx --config .eslintrc"
   },
   "dependencies": {
     "@ant-design/icons": "^4.0.0",
+    "@apollo/react-hooks": "^4.0.0",
     "@babel/runtime": "7.0.0-beta.55",
     "@craco/craco": "^3.1.0",
     "@sentry/browser": "^5.0.0",
@@ -31,6 +31,10 @@
     "@types/react": "^16.9.51",
     "@types/react-dom": "^16.9.8",
     "antd": "^4.0.0",
+    "apollo-boost": "^0.4.9",
+    "apollo-cache-inmemory": "^1.6.6",
+    "apollo-client": "^2.6.10",
+    "apollo-link-ws": "^1.0.20",
     "axios": "^0.18.0",
     "axios-hooks": "^1.9.0",
     "classnames": "^2.2.6",
@@ -38,6 +42,8 @@
     "connected-react-router": "^6.4.0",
     "craco-antd": "1.18.0",
     "formik": "^2.0.0",
+    "graphql": "^15.4.0",
+    "graphql-tag": "^2.11.0",
     "history": "^4.7.2",
     "immutable": "4.0.0-rc.10",
     "inspire-schemas": "^61.2.6-2-g90a8aaf",
@@ -109,5 +115,10 @@
     "antd/rc-select": "10.1.0",
     "moment-timezone/moment": "2.24.0"
   },
-  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"]
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
