@@ -2,6 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
+// import { gql } from "apollo-boost";
+// import {useQuery } from '@apollo/react-hooks';
+
 import { Row, Col } from 'antd';
 import DocumentHead from '../../common/components/DocumentHead';
 import ConferenceDates from '../components/ConferenceDates';
@@ -25,6 +28,18 @@ import withRouteActionsDispatcher from '../../common/withRouteActionsDispatcher'
 import EventTitle from '../../common/components/EventTitle';
 import { CONFERENCES_PID_TYPE } from '../../common/constants';
 import UrlsAction from '../../literature/components/UrlsAction';
+
+
+// const GET_POST = gql`
+//   subscription GetConference($id: uuid!) {
+//     posts(where: { id: { _eq: $id } }) {
+//       id
+//       body
+//       title
+//       createdAt
+//     }
+//   }
+// `;
 
 function DetailPage({ record }) {
   const metadata = record.get('metadata');
