@@ -11,6 +11,7 @@ import {
   fetchLiterature,
   fetchLiteratureAuthors,
   fetchLiteratureReferences,
+  fetchLiteratureSimilarPapers,
 } from '../../../actions/literature';
 import Abstract from '../../components/Abstract';
 import ArxivEprintList from '../../components/ArxivEprintList';
@@ -36,6 +37,7 @@ import CitationsByYearGraphContainer from '../../../common/containers/CitationsB
 import Figures from '../../components/Figures';
 import RequireOneOf from '../../../common/components/RequireOneOf';
 import ReferenceListContainer from '../../../common/containers/ReferenceListContainer';
+import SimilarPaperListContainer from '../../../common/containers/SimilarPaperListContainer';
 import PublicNotesList from '../../../common/components/PublicNotesList';
 import UrlsAction from '../../components/UrlsAction';
 import DeletedAlert from '../../../common/components/DeletedAlert';
@@ -56,6 +58,7 @@ function DetailPage({
   referencesCount,
   supervisors,
   seminarsCount,
+  similarPapersCount,
 }) {
   const metadata = record.get('metadata');
 
@@ -239,8 +242,19 @@ function DetailPage({
                     <Figures figures={figures} />
                   </ContentBox>
                 </Tabs.TabPane>
+                <Tabs.TabPane
+                  tab={
+                    <TabNameWithCount
+                      name="Similar Papers"
+                      count={similarPapersCount}
+                    />
+                  }
+                  key="3"
+                >
+                  <SimilarPaperListContainer recordId={controlNumber} />
+                </Tabs.TabPane>
                 {seminarsCount > 0 && (
-                  <Tabs.TabPane tab={<span>Seminars</span>} key="3">
+                  <Tabs.TabPane tab={<span>Seminars</span>} key="4">
                     <ContentBox>
                       <LiteratureSeminars />
                     </ContentBox>
@@ -278,6 +292,7 @@ const mapStateToProps = state => ({
     LITERATURE_SEMINARS_NS,
     'initialTotal',
   ]),
+  similarPapersCount: state.literature.get('totalSimilarPapers'),
 });
 
 const DetailPageContainer = connect(mapStateToProps)(DetailPage);
@@ -293,6 +308,7 @@ export default withRouteActionsDispatcher(DetailPageContainer, {
     searchBaseQueriesUpdate(LITERATURE_SEMINARS_NS, {
       baseQuery: { q: `literature_records.record.$ref:${id}` },
     }),
+    fetchLiteratureSimilarPapers(id),
   ],
   loadingStateSelector: state => !state.literature.hasIn(['data', 'metadata']),
 });

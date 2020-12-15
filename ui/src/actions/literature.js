@@ -6,6 +6,9 @@ import {
   LITERATURE_REFERENCES_ERROR,
   LITERATURE_REFERENCES_REQUEST,
   LITERATURE_REFERENCES_SUCCESS,
+  LITERATURE_SIMILAR_ERROR,
+  LITERATURE_SIMILAR_REQUEST,
+  LITERATURE_SIMILAR_SUCCESS,
   LITERATURE_AUTHORS_ERROR,
   LITERATURE_AUTHORS_REQUEST,
   LITERATURE_AUTHORS_SUCCESS,
@@ -32,6 +35,27 @@ function fetchLiteratureReferencesSuccess(result) {
 function fetchLiteratureReferencesError(error) {
   return {
     type: LITERATURE_REFERENCES_ERROR,
+    payload: error,
+  };
+}
+
+function fetchingLiteratureSimilarPapers(query) {
+  return {
+    type: LITERATURE_SIMILAR_REQUEST,
+    payload: query,
+  };
+}
+
+function fetchLiteratureSimilarPapersSuccess(result) {
+  return {
+    type: LITERATURE_SIMILAR_SUCCESS,
+    payload: result,
+  };
+}
+
+function fetchLiteratureSimilarPapersError(error) {
+  return {
+    type: LITERATURE_SIMILAR_ERROR,
     payload: error,
   };
 }
@@ -83,6 +107,31 @@ export function fetchLiteratureReferences(recordId, newQuery = {}) {
       if (!isCancelError(error)) {
         const payload = httpErrorToActionPayload(error);
         dispatch(fetchLiteratureReferencesError(payload));
+      }
+    }
+  };
+}
+
+export function fetchLiteratureSimilarPapers(recordId, newQuery = {}) {
+  return async (dispatch, getState, http) => {
+    const { literature } = getState();
+    const query = {
+      ...literature.get('querySimilarPapers').toJS(),
+      ...newQuery,
+    };
+    dispatch(fetchingLiteratureSimilarPapers(query));
+    const queryString = stringify(query, { indices: false });
+    try {
+      const response = await http.get(
+        `/literature/${recordId}/similar_papers?${queryString}`,
+        {},
+        'literature-similar-papers-detail'
+      );
+      dispatch(fetchLiteratureSimilarPapersSuccess(response.data));
+    } catch (error) {
+      if (!isCancelError(error)) {
+        const payload = httpErrorToActionPayload(error);
+        dispatch(fetchLiteratureSimilarPapersError(payload));
       }
     }
   };

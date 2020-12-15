@@ -7,6 +7,9 @@ import {
   LITERATURE_REFERENCES_ERROR,
   LITERATURE_REFERENCES_REQUEST,
   LITERATURE_REFERENCES_SUCCESS,
+  LITERATURE_SIMILAR_ERROR,
+  LITERATURE_SIMILAR_REQUEST,
+  LITERATURE_SIMILAR_SUCCESS,
   LITERATURE_AUTHORS_ERROR,
   LITERATURE_AUTHORS_REQUEST,
   LITERATURE_AUTHORS_SUCCESS,
@@ -25,6 +28,14 @@ export const initialState = fromJS({
   references: [],
   totalReferences: 0,
   queryReferences: {
+    page: 1,
+    size: 25,
+  },
+  loadingSimilarPapers: false,
+  errorSimilarPapers: null,
+  similarPapers: [],
+  totalSimilarPapers: 0,
+  querySimilarPapers: {
     page: 1,
     size: 25,
   },
@@ -60,6 +71,25 @@ const literatureReducer = (state = initialState, action) => {
         .set('errorReferences', fromJS(action.payload.error))
         .set('references', initialState.get('references'))
         .set('totalReferences', initialState.get('totalReferences'));
+    case LITERATURE_SIMILAR_REQUEST:
+      return state
+        .set('loadingSimilarPapers', true)
+        .set('querySimilarPapers', fromJS(action.payload));
+    case LITERATURE_SIMILAR_SUCCESS:
+      return state
+        .set('loadingSimilarPapers', false)
+        .set('similarPapers', fromJS(action.payload.metadata.similar_papers))
+        .set('errorSimilarPapers', initialState.get('errorSimilarPapers'))
+        .set(
+          'totalSimilarPapers',
+          action.payload.metadata.similar_papers_count
+        );
+    case LITERATURE_SIMILAR_ERROR:
+      return state
+        .set('loadingSimilarPapers', false)
+        .set('errorSimilarPapers', fromJS(action.payload.error))
+        .set('similarPapers', initialState.get('similarPapers'))
+        .set('totalSimilar', initialState.get('totalSimilar'));
     case LITERATURE_AUTHORS_REQUEST:
       return state.set('loadingAuthors', true);
     case LITERATURE_AUTHORS_SUCCESS:

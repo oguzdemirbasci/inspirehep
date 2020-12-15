@@ -265,6 +265,34 @@ class LiteratureSearch(InspireSearch):
         return citations_search.execute().hits
 
     @staticmethod
+    def similar_papers(record, page=1, size=10):
+        if "control_number" not in record:
+            return None
+
+        _source = [
+            "authors",
+            "control_number",
+            "earliest_date",
+            "titles",
+            "publication_info",
+            "misc",
+        ]
+        from_rec = (page - 1) * size
+        citations_query = (
+            Q("match", **{"references.record.$ref": record["control_number"]})
+            & Q("match", **{"_collections": "Literature"})
+            & ~Q("match", **{"related_records.relation": "successor"})
+            & ~Q("match", **{"control_number": record["control_number"]})
+        )
+        citations_search = (
+            LiteratureSearch()
+            .query(citations_query)
+            .params(_source=_source, from_=from_rec, size=size)
+            .sort("-earliest_date")
+        )
+        return citations_search.execute().hits
+
+    @staticmethod
     def get_records_by_pids(pids, source=None, size=10000):
         if not pids:
             return []

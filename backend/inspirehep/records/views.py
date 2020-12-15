@@ -80,6 +80,34 @@ class LiteratureReferencesResource(MethodView):
         return jsonify(data)
 
 
+class LiteratureSimilarResource(MethodView):
+    view_name = "literature_similar"
+
+    @pass_record
+    def get(self, pid, record):
+        page = request.values.get("page", 1, type=int)
+        size = request.values.get("size", 25, type=int)
+
+        if page < 1 or size < 1:
+            abort(400)
+
+        if size > current_app.config["MAX_API_RESULTS"]:
+            raise MaxResultWindowRESTError()
+
+        ## TODO: change here with similar papers query.
+        similar_papers_results = LiteratureSearch.similar_papers(record, page, size)
+        similar_papers_count = similar_papers_results.total["value"]
+        similar_papers = [paper.to_dict() for paper in similar_papers_results]
+
+        data = {
+            "metadata": {
+                "similar_papers": similar_papers,
+                "similar_papers_count": similar_papers_count,
+            }
+        }
+        return jsonify(data)
+
+
 @blueprint.route("/literature/import/<path:identifier>", methods=("GET",))
 def import_article_view(identifier):
     try:
@@ -109,6 +137,9 @@ literature_citations_view = LiteratureCitationsResource.as_view(
 literature_references_view = LiteratureReferencesResource.as_view(
     LiteratureReferencesResource.view_name
 )
+literature_similar_view = LiteratureSimilarResource.as_view(
+    LiteratureSimilarResource.view_name
+)
 blueprint.add_url_rule(
     '/literature/<inspirepid(lit,record_class="inspirehep.records.api:LiteratureRecord"):pid_value>/citations',
     view_func=literature_citations_view,
@@ -116,4 +147,8 @@ blueprint.add_url_rule(
 blueprint.add_url_rule(
     '/literature/<inspirepid(lit,record_class="inspirehep.records.api:LiteratureRecord"):pid_value>/references',
     view_func=literature_references_view,
+)
+blueprint.add_url_rule(
+    '/literature/<inspirepid(lit,record_class="inspirehep.records.api:LiteratureRecord"):pid_value>/similar_papers',
+    view_func=literature_similar_view,
 )

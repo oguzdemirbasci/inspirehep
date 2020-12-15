@@ -59,6 +59,7 @@ class LiteratureDetailSchema(CatalogerCanEditMixin, LiteraturePublicSchema):
             "record_affiliations",
             "refereed",
             "references",
+            "similar_papers",
             "withdrawn",
             "first_author",
         ]
